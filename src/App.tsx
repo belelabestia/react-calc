@@ -4,8 +4,7 @@ import { Display, DisplayProps } from './display/Display';
 import { Keys } from './keys/Keys';
 import { Digit, Operator, Operators } from './operator/operator';
 
-type AppState = DisplayProps & { justCalculated: boolean }
-
+type AppState = DisplayProps & { reset: boolean };
 type StateMapper = (state: AppState) => AppState;
 type StateMapperFactory<T> = (param: T) => StateMapper;
 
@@ -13,21 +12,22 @@ const initialState: AppState = {
   partial: '0',
   operator: Operators.Init,
   value: '',
-  justCalculated: false
+  reset: false
 };
 
+const resetIfNeeded: StateMapper = state => state.reset ? initialState : state;
+
+// TODO tutte le altre con resetIfNeeded
 const addDigit: StateMapperFactory<Digit> = digit => state => ({
-  partial: state.justCalculated ? initialState.partial : state.partial,
-  value: state.justCalculated ? digit : (state.value === '0' ? '' : state.value) + digit,
-  operator: state.justCalculated ? initialState.operator : state.operator,
-  justCalculated: false
+  ...resetIfNeeded(state),
+  value: state.reset ? digit : (state.value === '0' ? '' : state.value) + digit
 } as AppState);
 
 const addDecimalSeparator: StateMapper = state => ({
-  partial: state.justCalculated ? initialState.partial : state.partial,
-  value: state.justCalculated ? '0.' : (state.value === '' ? '0' : state.value) + '.',
-  operator: state.justCalculated ? initialState.operator : state.operator,
-  justCalculated: false
+  partial: state.reset ? initialState.partial : state.partial,
+  value: state.reset ? '0.' : (state.value === '' ? '0' : state.value) + '.',
+  operator: state.reset ? initialState.operator : state.operator,
+  reset: false
 } as AppState);
 
 const throwIfNull: <T>(param: T | null) => T | never = param => {
@@ -38,16 +38,16 @@ const throwIfNull: <T>(param: T | null) => T | never = param => {
 const calc = (state: AppState) => String(throwIfNull(state.operator)(Number(state.partial), Number(state.value)))
 
 const addOperator: StateMapperFactory<Operator> = operator => state => ({
-  partial: (!state.justCalculated && state.value !== '') ? calc(state) : state.partial,
+  partial: (!state.reset && state.value !== '') ? calc(state) : state.partial,
   value: '',
   operator,
-  justCalculated: false
+  reset: false
 } as AppState)
 
 const result: StateMapper = state => ({
   ...state,
   partial: calc(state),
-  justCalculated: true
+  reset: true
 } as AppState);
 
 function App(): JSX.Element {
