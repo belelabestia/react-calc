@@ -33,6 +33,7 @@ Richiede:
 ```
 git clone https://github.com/belelabestia/react-calc.git
 cd react-calc
+npm i
 npm start
 ```
 
