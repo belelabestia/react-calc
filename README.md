@@ -35,3 +35,9 @@ git clone https://github.com/belelabestia/react-calc.git
 cd react-calc
 npm start
 ```
+
+## Note
+
+- Necessita di refactoring
+- Non so usare React
+- Non pensavo che una calcolatrice di base potesse essere così impestata
