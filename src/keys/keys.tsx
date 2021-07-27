@@ -1,6 +1,6 @@
 import { Dispatch } from 'react';
-import { Digit, Operator, Operators } from '../operators/operator';
-import './keys.css';
+import { Digit, Operator, Operators } from '../operator/operator';
+import './Keys.css';
 
 type KeysProps = {
   onDigit: Dispatch<Digit>;
@@ -34,15 +34,15 @@ export function Keys(props: KeysProps): JSX.Element {
   );
 }
 
+type Emitter = () => void;
+
+function emitter<T>(event: Dispatch<T> | Dispatch<void>, arg?: T): Emitter {
+  return arg === undefined ? () => (event as Dispatch<void>)() : () => (event as Dispatch<T>)(arg);
+}
+
 type DigitButtonProps = {
   digit: string;
   onClick: Dispatch<Digit>;
-};
-
-type Emitter = () => void;
-
-type HasOnClick<T> = {
-  onClick: Dispatch<T>;
 };
 
 function digit(data: string | number): Digit {
@@ -53,10 +53,6 @@ function digit(data: string | number): Digit {
   return str as Digit;
 }
 
-function emitter<T>(event: Dispatch<T> | Dispatch<void>, arg?: T): Emitter {
-  return arg == undefined ? () => (event as Dispatch<void>)() : () => (event as Dispatch<T>)(arg);
-}
-
 function DigitButton(props: DigitButtonProps): JSX.Element {
   return (
     <div className="button digit" data-digit={props.digit} onClick={emitter(props.onClick, digit(props.digit))}>
@@ -64,6 +60,10 @@ function DigitButton(props: DigitButtonProps): JSX.Element {
     </div>
   );
 }
+
+type HasOnClick<T> = {
+  onClick: Dispatch<T>;
+};
 
 type OperatorButtonProps = {
   symbol: string;
