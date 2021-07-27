@@ -4,24 +4,30 @@ import { Display, DisplayProps } from './display/display';
 import { Keys } from './keys/keys';
 import { Digit, Operator, Operators } from './operators/operator';
 
-type AppState = DisplayProps;
+type AppState = DisplayProps & { justCalculated: boolean }
+
 type StateMapper = (state: AppState) => AppState;
 type StateMapperFactory<T> = (param: T) => StateMapper;
 
-const initialState = {
+const initialState: AppState = {
   partial: '0',
   operator: Operators.Init,
-  value: ''
+  value: '',
+  justCalculated: false
 };
 
 const addDigit: StateMapperFactory<Digit> = digit => state => ({
-  ...state,
-  value: state.value + digit
+  partial: state.justCalculated ? initialState.partial : state.partial,
+  value: state.justCalculated ? digit : (state.value == '0' ? '' : state.value) + digit,
+  operator: state.justCalculated ? initialState.operator : state.operator,
+  justCalculated: false
 } as AppState);
 
 const addDecimalSeparator: StateMapper = state => ({
-  ...state,
-  value: state.value + '.'
+  partial: state.justCalculated ? initialState.partial : state.partial,
+  value: state.justCalculated ? '0.' : (state.value == '' ? '0' : state.value) + '.',
+  operator: state.justCalculated ? initialState.operator : state.operator,
+  justCalculated: false
 } as AppState);
 
 const throwIfNull: <T>(param: T | null) => T | never = param => {
@@ -32,15 +38,16 @@ const throwIfNull: <T>(param: T | null) => T | never = param => {
 const calc = (state: AppState) => String(throwIfNull(state.operator)(Number(state.partial), Number(state.value)))
 
 const addOperator: StateMapperFactory<Operator> = operator => state => ({
-  partial: state.value != '' ? calc(state) : state.partial,
+  partial: (!state.justCalculated && state.value != '') ? calc(state) : state.partial,
   value: '',
-  operator
+  operator,
+  justCalculated: false
 } as AppState)
 
 const result: StateMapper = state => ({
-  partial: '0',
-  operator: Operators.Init,
-  value: calc(state)
+  ...state,
+  partial: calc(state),
+  justCalculated: true
 } as AppState);
 
 function App(): JSX.Element {
