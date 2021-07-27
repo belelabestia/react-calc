@@ -1,24 +1,65 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import { Display, DisplayProps } from './display/display';
+import { Keys } from './keys/keys';
+import { Digit, Operator, Operators } from './operators/operator';
 
-function App() {
+type AppState = DisplayProps;
+type StateMapper = (state: AppState) => AppState;
+type StateMapperFactory<T> = (param: T) => StateMapper;
+
+const initialState = {
+  partial: '0',
+  operator: Operators.Init,
+  value: ''
+};
+
+const addDigit: StateMapperFactory<Digit> = digit => state => ({
+  ...state,
+  value: state.value + digit
+} as AppState);
+
+const addDecimalSeparator: StateMapper = state => ({
+  ...state,
+  value: state.value + '.'
+} as AppState);
+
+const throwIfNull: <T>(param: T | null) => T | never = param => {
+  if (param == null) throw new Error('Null value not accepted.')
+  return param;
+}
+
+const calc = (state: AppState) => String(throwIfNull(state.operator)(Number(state.partial), Number(state.value)))
+
+const addOperator: StateMapperFactory<Operator> = operator => state => ({
+  partial: state.value != '' ? calc(state) : state.partial,
+  value: '',
+  operator
+} as AppState)
+
+const result: StateMapper = state => ({
+  partial: '0',
+  operator: Operators.Init,
+  value: calc(state)
+} as AppState);
+
+function App(): JSX.Element {
+  const [state, setState] = useState<AppState>(initialState);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div id="app">
+      <Display
+        partial={state.partial}
+        operator={state.operator}
+        value={state.value}
+      ></Display>
+      <Keys
+        onDigit={(digit: Digit) => setState(addDigit(digit))}
+        onDecimalSeparator={() => setState(addDecimalSeparator)}
+        onOperator={(operator: Operator) => setState(addOperator(operator))}
+        onEquals={() => setState(result)}
+        onCancel={() => setState(initialState)}
+      ></Keys>
     </div>
   );
 }
