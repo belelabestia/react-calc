@@ -13,7 +13,7 @@ Operazioni supportate:
 - Addizione
 - Sottrazione
 - Moltiplicazione
-- Division
+- Divisione
 
 ### Uguale
 
