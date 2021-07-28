@@ -2,6 +2,8 @@
 
 Una calcolatrice scritta in React, da una persona che non sa usare React.
 
+![Screenshot](./screenshot.png)
+
 ## Specifica
 
 Ricalca il funzionamenteo della calcolatrice Standard di Windows, limitandosi alle seguenti funzioni:
