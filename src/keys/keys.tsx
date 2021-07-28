@@ -1,6 +1,6 @@
 import { Dispatch } from 'react';
 import { Digit, Operator, Operators } from '../operator/operator';
-import './Keys.css';
+import './keys.css';
 
 type KeysProps = {
   onDigit: Dispatch<Digit>;

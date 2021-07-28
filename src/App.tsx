@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './App.css';
-import { Display, DisplayProps } from './display/Display';
-import { Keys } from './keys/Keys';
+import { Display, DisplayProps } from './display/display';
+import { Keys } from './keys/keys';
 import { Digit, Operator, Operators } from './operator/operator';
 
 type AppState = DisplayProps & { reset: boolean };

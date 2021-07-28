@@ -1,4 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Questrial&display=swap%27');
+
 #app {
+    background: linear-gradient(45deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,1) 100%);
+    font-size: 1.7em;
+    font-weight: 600;
+    font-family: Questrial, sans-serif;
     display: grid;
     grid-template-rows: 25% 75%;
     height: 100vh;

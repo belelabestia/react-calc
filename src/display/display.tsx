@@ -1,5 +1,5 @@
 import { Operator, Operators } from '../operator/operator';
-import './Display.css'
+import './display.css'
 
 type OperatorString = '' | '+' | '-' | '*' | '/';
 
