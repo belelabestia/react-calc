@@ -17,25 +17,17 @@ const initialState: AppState = {
 
 const resetIfNeeded: StateMapper = state => state.reset ? initialState : state;
 
-// TODO tutte le altre con resetIfNeeded
 const addDigit: StateMapperFactory<Digit> = digit => state => ({
   ...resetIfNeeded(state),
   value: state.reset ? digit : (state.value === '0' ? '' : state.value) + digit
 } as AppState);
 
 const addDecimalSeparator: StateMapper = state => ({
-  partial: state.reset ? initialState.partial : state.partial,
+  ...resetIfNeeded(state),
   value: state.reset ? '0.' : (state.value === '' ? '0' : state.value) + '.',
-  operator: state.reset ? initialState.operator : state.operator,
-  reset: false
 } as AppState);
 
-const throwIfNull: <T>(param: T | null) => T | never = param => {
-  if (param === null) throw new Error('Null value not accepted.')
-  return param;
-}
-
-const calc = (state: AppState) => String(throwIfNull(state.operator)(Number(state.partial), Number(state.value)))
+const calc = (state: AppState) => String(state.operator(Number(state.partial), Number(state.value)));
 
 const addOperator: StateMapperFactory<Operator> = operator => state => ({
   partial: (!state.reset && state.value !== '') ? calc(state) : state.partial,
