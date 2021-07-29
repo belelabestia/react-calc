@@ -2,7 +2,7 @@ import { DisplayProps } from "./display/display";
 import { Digit, Operator, Operators } from "./operator/operator";
 
 export type State = DisplayProps & { reset: boolean };
-type Action = (state: State) => State;
+export type Action = (state: State) => State;
 type ActionFactory<T> = (payload: T) => Action;
 
 type ActionEnumObject = {
@@ -13,12 +13,19 @@ type ActionEnumObject = {
   Reset: Action;
 };
 
+export const initialState: State = {
+  partial: "0",
+  operator: Operators.Init,
+  value: "",
+  reset: false,
+};
+
 export const Actions: ActionEnumObject = {
   AddDecimalSeparator: state => ({
     ...resetIfNeeded(state),
     value: state.reset
       ? "0."
-      : (state.value === "" ? "0" : state.value) + ".",
+      : (state.value === "" ? "0" : state.value) + (state.value.includes(".") ? "" : "."),
   }),
   AddOperator: payload => state => ({
     partial:
@@ -41,19 +48,8 @@ export const Actions: ActionEnumObject = {
   Reset: _ => initialState
 };
 
-export const initialState: State = {
-  partial: "0",
-  operator: Operators.Init,
-  value: "",
-  reset: false,
-};
-
 const resetIfNeeded: (state: State) => State = (state) =>
   state.reset ? initialState : state;
 
 const calc = (state: State) =>
   String(state.operator.fn(Number(state.partial), Number(state.value)));
-
-export function reducer(state: State, action: Action): State {
-  return action(state);
-}
