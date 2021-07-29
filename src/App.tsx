@@ -1,12 +1,12 @@
-import { useReducer } from "react";
+import { useState } from "react";
 import "./App.css";
-import { Action, Actions, initialState, State } from "./AppState";
+import { Actions, initialState } from "./AppState";
 import { Display } from "./display/display";
 import { Keys } from "./keys/keys";
 import { Digit, Operator } from "./operator/operator";
 
 function App(): JSX.Element {
-  const [state, dispatch] = useReducer((state: State, action: Action) => action(state), initialState);
+  const [state, dispatch] = useState(initialState);
 
   const onDigit = (digit: Digit) => dispatch(Actions.AddDigit(digit));
   const onDecimalSeparator = () => dispatch(Actions.AddDecimalSeparator);
