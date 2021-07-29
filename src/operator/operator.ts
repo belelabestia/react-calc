@@ -1,5 +1,17 @@
-export type Digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
-export type Operator = (a: number, b: number) => number;
+export const digits = [
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "0",
+] as const;
+export type Digit = typeof digits[number];
+export type Operator = { symbol: string; fn: (a: number, b: number) => number };
 
 export type OperatorEnumObject = {
   Init: Operator;
@@ -7,12 +19,12 @@ export type OperatorEnumObject = {
   Subtract: Operator;
   Multiply: Operator;
   Divide: Operator;
-}
+};
 
 export const Operators: OperatorEnumObject = {
-  Init: (_, b) => b,
-  Add: (a, b) => a + b,
-  Subtract: (a, b) => a - b,
-  Multiply: (a, b) => a * b,
-  Divide: (a, b) => a / b
+  Init: { symbol: "", fn: (_, b) => b },
+  Add: { symbol: "+", fn: (a, b) => a + b },
+  Subtract: { symbol: "-", fn: (a, b) => a - b },
+  Multiply: { symbol: "*", fn: (a, b) => a * b },
+  Divide: { symbol: "/", fn: (a, b) => a / b },
 };
