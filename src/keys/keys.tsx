@@ -6,8 +6,22 @@ type KeysProps = {
   onDigit: Dispatch<Digit>;
   onDecimalSeparator: Dispatch<void>;
   onOperator: Dispatch<Operator>;
-  onEquals: Dispatch<any>;
-  onCancel: Dispatch<any>;
+  onEquals: Dispatch<void>;
+  onCancel: Dispatch<void>;
+};
+
+type SpecialButtonType = { name: string, symbol: string };
+
+type SpecialButtonTypeEnumObject = {
+  DecimalSeparator: SpecialButtonType;
+  Equals: SpecialButtonType;
+  Cancel: SpecialButtonType;
+};
+
+const SpecialButtons: SpecialButtonTypeEnumObject = {
+  DecimalSeparator: { name: "decimal-separator", symbol: "." },
+  Equals: { name: "equals", symbol: "=" },
+  Cancel: { name: "cancel", symbol: "C" }
 };
 
 export function Keys(props: KeysProps): JSX.Element {
@@ -18,7 +32,7 @@ export function Keys(props: KeysProps): JSX.Element {
       ))}
 
       <SpecialButton
-        type="decimal-separator"
+        type={SpecialButtons.DecimalSeparator}
         onClick={props.onDecimalSeparator}
       />
       <OperatorButton operator={Operators.Add} onClick={props.onOperator} />
@@ -31,8 +45,8 @@ export function Keys(props: KeysProps): JSX.Element {
         onClick={props.onOperator}
       />
       <OperatorButton operator={Operators.Divide} onClick={props.onOperator} />
-      <SpecialButton type="equals" onClick={props.onEquals} />
-      <SpecialButton type="cancel" onClick={props.onCancel} />
+      <SpecialButton type={SpecialButtons.Equals} onClick={props.onEquals} />
+      <SpecialButton type={SpecialButtons.Cancel} onClick={props.onCancel} />
     </div>
   );
 }
@@ -74,23 +88,13 @@ function OperatorButton(props: OperatorButtonProps): JSX.Element {
 }
 
 type SpecialButtonProps = {
-  type: "decimal-separator" | "equals" | "cancel";
+  type: SpecialButtonType;
 } & HasOnClick<void>;
 
 function SpecialButton(props: SpecialButtonProps): JSX.Element {
-  const symbol = (() => {
-    switch (props.type) {
-      case "cancel":
-        return "C";
-      case "decimal-separator":
-        return ".";
-      case "equals":
-        return "=";
-    }
-  })();
   return (
-    <div className={`button ${props.type}`} onClick={() => props.onClick()}>
-      {symbol}
+    <div className={`button ${props.type.name}`} onClick={() => props.onClick()}>
+      {props.type.symbol}
     </div>
   );
 }

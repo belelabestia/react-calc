@@ -2,12 +2,44 @@ import { DisplayProps } from "./display/display";
 import { Digit, Operator, Operators } from "./operator/operator";
 
 export type State = DisplayProps & { reset: boolean };
-type Action =
-  | { type: "addDecimalSeparator" }
-  | { type: "addOperator"; payload: Operator }
-  | { type: "addDigit"; payload: Digit }
-  | { type: "result" }
-  | { type: "reset" };
+type Action = (state: State) => State;
+type ActionFactory<T> = (payload: T) => Action;
+
+type ActionEnumObject = {
+  AddDecimalSeparator: Action;
+  AddOperator: ActionFactory<Operator>;
+  AddDigit: ActionFactory<Digit>;
+  Result: Action;
+  Reset: Action;
+};
+
+export const Actions: ActionEnumObject = {
+  AddDecimalSeparator: state => ({
+    ...resetIfNeeded(state),
+    value: state.reset
+      ? "0."
+      : (state.value === "" ? "0" : state.value) + ".",
+  }),
+  AddOperator: payload => state => ({
+    partial:
+      !state.reset && state.value !== "" ? calc(state) : state.partial,
+    value: "",
+    operator: payload,
+    reset: false,
+  }),
+  AddDigit: digit => state => ({
+    ...resetIfNeeded(state),
+    value: state.reset
+      ? digit
+      : (state.value === "0" ? "" : state.value) + digit,
+  }),
+  Result: state => ({
+    ...state,
+    partial: calc(state),
+    reset: true,
+  }),
+  Reset: _ => initialState
+};
 
 export const initialState: State = {
   partial: "0",
@@ -23,36 +55,5 @@ const calc = (state: State) =>
   String(state.operator.fn(Number(state.partial), Number(state.value)));
 
 export function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case "addDecimalSeparator":
-      return {
-        ...resetIfNeeded(state),
-        value: state.reset
-          ? "0."
-          : (state.value === "" ? "0" : state.value) + ".",
-      };
-    case "addOperator":
-      return {
-        partial:
-          !state.reset && state.value !== "" ? calc(state) : state.partial,
-        value: "",
-        operator: action.payload,
-        reset: false,
-      };
-    case "addDigit":
-      return {
-        ...resetIfNeeded(state),
-        value: state.reset
-          ? action.payload
-          : (state.value === "0" ? "" : state.value) + action.payload,
-      };
-    case "result":
-      return {
-        ...state,
-        partial: calc(state),
-        reset: true,
-      };
-    case "reset":
-      return initialState;
-  }
+  return action(state);
 }

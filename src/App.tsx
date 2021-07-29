@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import "./App.css";
-import { initialState, reducer } from "./AppState";
+import { Actions, initialState, reducer } from "./AppState";
 import { Display } from "./display/display";
 import { Keys } from "./keys/keys";
 import { Digit, Operator } from "./operator/operator";
@@ -8,13 +8,11 @@ import { Digit, Operator } from "./operator/operator";
 function App(): JSX.Element {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const onDigit = (digit: Digit) =>
-    dispatch({ type: "addDigit", payload: digit });
-  const onDecimalSeparator = () => dispatch({ type: "addDecimalSeparator" });
-  const onOperator = (operator: Operator) =>
-    dispatch({ type: "addOperator", payload: operator });
-  const onEquals = () => dispatch({ type: "result" });
-  const onCancel = () => dispatch({ type: "reset" });
+  const onDigit = (digit: Digit) => dispatch(Actions.AddDigit(digit));
+  const onDecimalSeparator = () => dispatch(Actions.AddDecimalSeparator);
+  const onOperator = (operator: Operator) => dispatch(Actions.AddOperator(operator));
+  const onEquals = () => dispatch(Actions.Result);
+  const onCancel = () => dispatch(Actions.Reset);
 
   return (
     <div id="app">
