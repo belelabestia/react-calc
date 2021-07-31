@@ -2,6 +2,8 @@
 
 Una calcolatrice scritta in React, da una persona che non sa usare React.
 
+Ne ho realizzato un [clone in Angular](https://github.com/belelabestia/calc-ng).
+
 ![Screenshot](./screenshot.png)
 
 ## Specifica
